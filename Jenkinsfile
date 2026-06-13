@@ -24,16 +24,16 @@ pipeline {
                     volumeMounts:
                         - mountPath: /var/run/docker.sock
                           name: docker-sock
-                volumes:
+                  volumes:
                     - name: docker-sock
                       hostPath:
                         path: /var/run/docker.sock
             """
         }
     }
-    triggers {
-        pollSCM('* * * * *')
-        }
+    // triggers {
+    //     pollSCM('* * * * *')
+    //     }
 
     stages {
         stage('Test python') {
