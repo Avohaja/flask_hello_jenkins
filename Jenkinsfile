@@ -16,17 +16,13 @@ spec:
     - cat
     tty: true
   - name: docker
-    image: docker
-    command:
-    - cat
+    image: docker:24-dind
+    securityContext:
+      privileged: true
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ""
     tty: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
 """
         }
     }
