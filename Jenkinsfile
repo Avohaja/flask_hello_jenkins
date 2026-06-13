@@ -17,13 +17,10 @@ pipeline {
                     - cat
                     tty: true
                   - name: docker
-                    image: docker:dind
+                    image: docker
                     command: 
-                    - dockerd
-                    - --storage-driver=vfs
+                    - cat
                     tty: true
-                    securityContext:
-                      privileged: true
                     volumeMounts:
                         - mountPath: /var/run/docker.sock
                           name: docker-sock
@@ -34,9 +31,9 @@ pipeline {
             """
         }
     }
-    // triggers {
-    //     pollSCM('* * * * *')
-    //     }
+    triggers {
+        pollSCM('* * * * *')
+        }
 
     stages {
         stage('Test python') {
