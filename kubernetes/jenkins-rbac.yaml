@@ -1,0 +1,27 @@
+---
+# Role pour autoriser les opérations sur les Deployments, Services, Pods, etc.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: jenkins
+  name: jenkins-deployer
+rules:
+- apiGroups: ["", "apps", "extensions"]
+  resources: ["deployments", "services", "pods", "replicasets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+---
+# RoleBinding pour lier le Role au compte de service 'default'
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-deployer-binding
+  namespace: jenkins
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: jenkins
+roleRef:
+  kind: Role
+  name: jenkins-deployer
+  apiGroup: rbac.authorization.k8s.io
