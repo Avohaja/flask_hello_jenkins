@@ -30,7 +30,7 @@ spec:
     - mountPath: "/home/jenkins/agent"
       name: "workspace-volume"
       readOnly: false
-    - name: kubectl
+  - name: kubectl
     image: lachlanevenson/k8s-kubectl:v1.17.2 # use a version that match
     command:
     - cat
