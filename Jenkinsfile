@@ -60,7 +60,6 @@ spec:
                     sh """
                         mkdir -p /etc/docker
                         echo '{"insecure-registries":["host.docker.internal:4000"]}' > /etc/docker/daemon.json
-                        // Redémarre dockerd (spécifique à docker:dind)
                         pkill dockerd || true
                         sleep 2
                         dockerd --insecure-registry=host.docker.internal:4000 &
