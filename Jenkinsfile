@@ -90,8 +90,6 @@ spec:
         stage('Deploy') {
             steps {
                 container('kubectl') {
-                    sh "kubectl apply -f ./kubernetes/jenkins-rbac.yaml"
-                    sh "sleep 5"
                     sh "kubectl apply -f ./kubernetes/deployment.yaml"
                     sh "kubectl apply -f ./kubernetes/service.yaml"
                 }
