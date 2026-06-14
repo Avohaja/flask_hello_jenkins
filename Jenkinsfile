@@ -38,15 +38,16 @@ spec:
                 }
             }
         }
-        
+
         stage('Build image') {
             steps {
                 container('docker') {
                     sh """
-                        echo '{"insecure-registries":["host.docker.internal:4000"]}' > /etc/docker/daemon.json
-                        service docker restart
-                        sleep 5  # Attendre que Docker redémarre
-                    """
+                mkdir -p /etc/docker  # <-- Crée le dossier s'il n'existe pas
+                echo '{"insecure-registries":["host.docker.internal:4000"]}' > /etc/docker/daemon.json
+                service docker restart
+                sleep 5  # Attendre que Docker redémarre
+            """
                     sh "docker build -t host.docker.internal:4000/pythontest:latest ."
                     sh "docker push host.docker.internal:4000/pythontest:latest"
                 }
