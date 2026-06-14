@@ -54,20 +54,27 @@ spec:
             }
         }
         stage('Build and Push Docker Image') {
-    steps {
-        container('docker') {
-            sh """
-                mkdir -p /etc/docker
-                printf '{"insecure-registries":["host.docker.internal:4000"]}' > /etc/docker/daemon.json
-                pkill dockerd || true
-                sleep 2
-                dockerd --insecure-registry=host.docker.internal:4000 &
-                sleep 10
-            """
-            sh "docker build -t host.docker.internal:4000/pythontest:latest ."
-            sh "docker push host.docker.internal:4000/pythontest:latest"
+        
+            steps {
+                container('docker') {
+                    // 1. Configure le registry comme insecure
+                    sh """
+                        mkdir -p /etc/docker
+                        printf '{"insecure-registries":["host.docker.internal:4000"]}' > /etc/docker/daemon.json
+                    """
+                    // 2. Redémarre dockerd avec la nouvelle configuration
+                    //    (docker:dind gère déjà dockerd, donc on envoie un signal SIGHUP pour recharger la config)
+                    sh """
+                        kill -HUP 1 || true  # Envoie un signal SIGHUP au PID 1 (dockerd) pour recharger la config
+                        sleep 5  # Attend que la config soit rechargée
+                    """
+                    // 3. Vérifie que Docker est prêt
+                    sh "docker info | grep -i 'insecure'"
+                    // 4. Construit et pousse l'image
+                    sh "docker build -t host.docker.internal:4000/pythontest:latest ."
+                    sh "docker push host.docker.internal:4000/pythontest:latest"
+                }
+            }
         }
-    }
-}
     }
 }
