@@ -35,6 +35,11 @@ spec:
     command:
     - cat
     tty: true
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+    
   volumes:
   - name: workspace-volume
     emptyDir: {}
