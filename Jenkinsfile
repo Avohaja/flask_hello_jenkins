@@ -30,6 +30,11 @@ spec:
     - mountPath: "/home/jenkins/agent"
       name: "workspace-volume"
       readOnly: false
+    - name: kubectl
+    image: lachlanevenson/k8s-kubectl:v1.17.2 # use a version that match
+    command:
+    - cat
+    tty: true
   volumes:
   - name: workspace-volume
     emptyDir: {}
@@ -76,5 +81,15 @@ spec:
                 }
             }
         }
+
+        stage('Deploy') {
+            steps {
+                container('kubectl') {
+                    sh "kubectl apply -f ./kubernetes/deployment.yaml"
+                    sh "kubectl apply -f ./kubernetes/service.yaml"
+                }
+            }
+        }
+
     }
 }
