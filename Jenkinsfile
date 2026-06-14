@@ -54,23 +54,20 @@ spec:
             }
         }
         stage('Build and Push Docker Image') {
-            steps {
-                container('docker') {
-                    // Configure le registry comme insecure
-                    sh """
-                        mkdir -p /etc/docker
-                        echo '{"insecure-registries":["host.docker.internal:4000"]}' > /etc/docker/daemon.json
-                        pkill dockerd || true
-                        sleep 2
-                        dockerd --insecure-registry=host.docker.internal:4000 &
-                        sleep 10  // Attendre que Docker soit prêt
-                    """
-                    // Construit l'image
-                    sh 'docker build -t host.docker.internal:4000/pythontest:latest .'
-                    // Pousse l'image vers le registry local
-                    sh 'docker push host.docker.internal:4000/pythontest:latest'
-                }
-            }
+    steps {
+        container('docker') {
+            sh """
+                mkdir -p /etc/docker
+                printf '{"insecure-registries":["host.docker.internal:4000"]}' > /etc/docker/daemon.json
+                pkill dockerd || true
+                sleep 2
+                dockerd --insecure-registry=host.docker.internal:4000 &
+                sleep 10
+            """
+            sh "docker build -t host.docker.internal:4000/pythontest:latest ."
+            sh "docker push host.docker.internal:4000/pythontest:latest"
         }
+    }
+}
     }
 }
